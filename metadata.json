@@ -1,0 +1,6 @@
+{
+  "name": "StudyFlow",
+  "description": "An elegant, SaaS-grade student planner featuring tasks, Pomodoro focus mode, interactive exam countdowns, dark mode toggles, and dynamic metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
