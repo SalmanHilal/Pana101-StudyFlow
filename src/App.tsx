@@ -50,6 +50,9 @@ export default function App() {
   // Floating Modals triggers
   const [isQuickTaskModalOpen, setIsQuickTaskModalOpen] = useState(false);
 
+  // Profile Dropdown toggle state
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
   // Search filter
   const [globalSearch, setGlobalSearch] = useState('');
 
@@ -206,6 +209,14 @@ export default function App() {
     setUserProfile(nextProfile);
     storage.saveUserProfile(nextProfile);
     triggerToast('Academic profile updated', 'success');
+  };
+
+  const handleLogout = () => {
+    const loggedOutProfile = { name: '', goal: 'Maintain high academic goals and task concentration.', onboarded: false };
+    setUserProfile(loggedOutProfile);
+    storage.saveUserProfile(loggedOutProfile);
+    triggerToast('Logged out of StudyFlow workspace', 'info');
+    setIsProfileDropdownOpen(false);
   };
 
   const handleResetAllData = () => {
@@ -486,8 +497,65 @@ export default function App() {
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider hidden sm:inline">DARK MODE</span>
             </div>
 
-            <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold border-2 border-white dark:border-slate-900 shadow-sm cursor-pointer hover:opacity-90" onClick={() => handleTabNavigate('ai')}>
-              {userProfile.name ? userProfile.name.split(' ').map(n=>n[0]).join('') : 'JD'}
+            <div className="relative">
+              <button 
+                id="profile-dropdown-btn"
+                className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold border-2 border-white dark:border-slate-900 shadow-sm cursor-pointer hover:opacity-90 focus:outline-none select-none text-sm transition relative z-40"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                {userProfile.name ? userProfile.name.split(' ').map(n=>n[0]).join('') : 'ST'}
+              </button>
+
+              <AnimatePresence>
+                {isProfileDropdownOpen && (
+                  <>
+                    {/* Backdrop to close the dropdown on click outside */}
+                    <div 
+                      className="fixed inset-0 z-30 bg-transparent" 
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    />
+                    
+                    {/* Styled Dropdown Menu */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-40 text-left font-sans"
+                    >
+                      <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-850">
+                        <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                          {userProfile.name || 'Student'}
+                        </p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate mt-0.5 leading-normal">
+                          {userProfile.goal || 'Academic workspace'}
+                        </p>
+                      </div>
+                      
+                      <div className="p-1.5 space-y-0.5">
+                        <button
+                          onClick={() => {
+                            handleTabNavigate('ai');
+                            setIsProfileDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850 flex items-center gap-2 cursor-pointer transition"
+                        >
+                          <Cpu className="w-4 h-4 text-indigo-500" />
+                          <span>Cognitive Diagnostics</span>
+                        </button>
+                        
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 flex items-center gap-2 cursor-pointer transition font-sans"
+                        >
+                          <LogOut className="w-4 h-4 text-rose-500" />
+                          <span>Logout (Reset Settings)</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
