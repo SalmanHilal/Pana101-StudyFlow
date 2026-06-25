@@ -423,14 +423,8 @@ export default function App() {
           </nav>
         </div>
 
-        {/* Pro Account Upgrade Panel & Bottom Profile details */}
-        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <div className="bg-indigo-600 rounded-xl p-4 text-white text-sm">
-            <p className="font-medium mb-1">Pro Account</p>
-            <p className="opacity-80 text-xs mb-3">Manage subjects & sync devices</p>
-            <button className="w-full py-1.5 bg-white text-indigo-600 font-bold rounded-lg text-xs" onClick={() => triggerToast('Pro simulated environment active', 'info')}>Upgrade</button>
-          </div>
-
+        {/* Bottom Profile details */}
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3 px-1 cursor-pointer" onClick={() => handleTabNavigate('ai')}>
             <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold border-2 border-white dark:border-slate-900 shadow-sm">
               {userProfile.name ? userProfile.name.split(' ').map(n=>n[0]).join('') : 'SF'}
