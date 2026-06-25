@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   storage, 
   computeSmartDiagnostic,
@@ -35,6 +35,9 @@ export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Ref for main content area to scroll to top on tab navigate
+  const mainContentRef = useRef<HTMLElement>(null);
 
   // Theme State
   const [theme, setTheme] = useState<'light' | 'dark'>(storage.getThemePreference());
@@ -83,6 +86,13 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Scroll to top when tab changes
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+    }
+  }, [activeTab]);
 
   // Sync state triggers
   const triggerToast = (message: string, type: 'success' | 'info' | 'warning' = 'success') => {
@@ -351,12 +361,12 @@ export default function App() {
       )}
 
       {/* Toast Overlay Container */}
-      <div className="fixed top-5 right-5 z-50 space-y-3 pointer-events-none max-w-sm w-full">
+      <div className="fixed bottom-5 right-5 z-50 space-y-3 pointer-events-none max-w-sm w-full">
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
               className={`p-3.5 rounded-xl border shadow-lg flex items-start gap-2.5 backdrop-blur-md pointer-events-auto ${
@@ -450,7 +460,7 @@ export default function App() {
             <button
               id="mobile-nav-toggle"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850 focus:outline-none"
+              className="lg:hidden p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -517,7 +527,7 @@ export default function App() {
                       transition={{ duration: 0.15 }}
                       className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-40 text-left font-sans"
                     >
-                      <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-850">
+                      <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
                         <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                           {userProfile.name || 'Student'}
                         </p>
@@ -532,7 +542,7 @@ export default function App() {
                             handleTabNavigate('ai');
                             setIsProfileDropdownOpen(false);
                           }}
-                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850 flex items-center gap-2 cursor-pointer transition"
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer transition"
                         >
                           <Cpu className="w-4 h-4 text-indigo-500" />
                           <span>Cognitive Diagnostics</span>
@@ -650,7 +660,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* Scrollable Main Content Frame */}
-        <main className="flex-1 overflow-y-auto px-6 py-8 scrollbar-thin">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto px-6 py-8 scrollbar-thin">
           <div className="max-w-5xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
